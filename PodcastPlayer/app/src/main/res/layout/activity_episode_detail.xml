@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".EpisodeDetailActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/item_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5sp"
+                android:layout_marginTop="15sp"
+                android:layout_marginRight="5sp"
+                android:text="Titulo do Podcast"
+                android:textAlignment="center"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/lb_desc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5sp"
+                android:layout_marginTop="15sp"
+                android:layout_marginRight="10sp"
+                android:text="Description:"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/item_desc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15sp"
+                android:layout_marginRight="15sp"
+                android:text="Descrição do Podcast" />
+
+            <TextView
+                android:id="@+id/lb_dlLink"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5sp"
+                android:layout_marginTop="15sp"
+                android:layout_marginRight="5sp"
+                android:text="Download Link:"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/item_dlLink"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15sp"
+                android:layout_marginRight="15sp"
+                android:text="http://dllink.com" />
+
+            <TextView
+                android:id="@+id/lb_src"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5sp"
+                android:layout_marginTop="15sp"
+                android:text="Source:"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/item_src"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15sp"
+                android:layout_marginRight="15sp"
+                android:text="https://src.com.br" />
+
+            <TextView
+                android:id="@+id/lb_pubDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5sp"
+                android:layout_marginTop="15sp"
+                android:text="Published at:"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/item_pubDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15sp"
+                android:layout_marginRight="15sp"
+                android:layout_marginBottom="15sp"
+                android:text="19/02/1997" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>
