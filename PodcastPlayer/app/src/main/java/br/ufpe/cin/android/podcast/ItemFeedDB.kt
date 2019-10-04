@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities= arrayOf(ItemFeed::class), version=1)
+@Database(entities= arrayOf(ItemFeed::class), version=2)
 abstract class ItemFeedDB : RoomDatabase() {
     abstract fun itemFeedDAO() : ItemFeedDAO
     companion object {
@@ -17,7 +17,7 @@ abstract class ItemFeedDB : RoomDatabase() {
                         ctx.applicationContext,
                         ItemFeedDB::class.java,
                         "feed_items.db"
-                    ).build()
+                    ).fallbackToDestructiveMigration().build()
                 }
             }
             return INSTANCE!!

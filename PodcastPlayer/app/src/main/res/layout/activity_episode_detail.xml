@@ -28,6 +28,12 @@
                 android:textSize="24sp"
                 android:textStyle="bold" />
 
+            <Button
+                android:id="@+id/btn_download"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Download Episode" />
+
             <TextView
                 android:id="@+id/lb_desc"
                 android:layout_width="match_parent"

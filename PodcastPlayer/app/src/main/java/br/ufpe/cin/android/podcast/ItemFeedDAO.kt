@@ -4,7 +4,7 @@ import androidx.room.*
 
 @Dao
 interface ItemFeedDAO {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertItems(vararg items:ItemFeed)
 
     @Update
@@ -13,7 +13,7 @@ interface ItemFeedDAO {
     @Delete
     fun destroyItems(vararg items:ItemFeed)
 
-    @Query("SELECT * FROM feed_items")
+    @Query("SELECT * FROM feed_items ORDER BY title ASC")
     fun allItems() : List<ItemFeed>
 
     @Query("SELECT * FROM feed_items WHERE title LIKE :q")
@@ -26,5 +26,5 @@ interface ItemFeedDAO {
     fun searchItemByDescription(q : String) : List<ItemFeed>
 
     @Query("SELECT * FROM feed_items WHERE downloadLink LIKE :q")
-    fun searchItemByDownloadLink(q : String) : List<ItemFeed>
+    fun searchItemByDownloadLink(q : String) : ItemFeed
 }
