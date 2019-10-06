@@ -34,6 +34,8 @@ class DownloadPodcastService : IntentService("DownloadPodcastService") {
                 while (len >= 0) {
                     out.write(buffer, 0, len)
                     len = `in`.read(buffer)
+
+                    Log.e("DL_STATUS", "downloading.....")
                 }
                 out.flush()
             } finally {
@@ -45,6 +47,9 @@ class DownloadPodcastService : IntentService("DownloadPodcastService") {
                 podcast_item.downloaded_file_path = output.path
 
                 db.itemFeedDAO().updateItems(podcast_item)
+
+                Log.e("DL_STATUS", "DOWNLOADED!!!")
+
 
                 fos.fd.sync()
                 out.close()

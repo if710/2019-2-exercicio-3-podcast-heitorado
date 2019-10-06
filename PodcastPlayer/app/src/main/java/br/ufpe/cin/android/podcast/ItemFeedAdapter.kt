@@ -2,10 +2,12 @@ package br.ufpe.cin.android.podcast
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat.startForegroundService
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.itemlista.view.*
 
@@ -24,7 +26,7 @@ class ItemFeedAdapter (private val items: List<ItemFeed>, private val c: Context
         holder.titulo?.text = i.title
         holder.dataPublicacao?.text = i.pubDate
 
-        holder.itemView.setOnClickListener {
+        holder.itemView.podcast_info.setOnClickListener {
             val intnt = Intent(c, EpisodeDetailActivity::class.java)
 
             // Not really why this flag is needed, but it makes the app work as intended.
@@ -40,6 +42,22 @@ class ItemFeedAdapter (private val items: List<ItemFeed>, private val c: Context
             // Start the new activity with the provided intent and layout
             c.startActivity(intnt)
         }
+
+        if(i.downloaded_file_path != ""){
+            holder.itemView.btn_play.setOnClickListener {
+                Toast.makeText(c, "Playing Podcast...", Toast.LENGTH_SHORT).show()
+                var intnt = Intent(c, PlayEpisodeService::class.java)
+                intnt.data = Uri.parse(i.downloaded_file_path)
+                startForegroundService(c, intnt)
+            }
+        } else {
+            holder.itemView.btn_play.isClickable = false
+            holder.itemView.btn_play.isFocusable = false
+            holder.itemView.btn_play.alpha = (0.1).toFloat()
+        }
+
+
+
     }
 
     class ViewHolder (item : View) : RecyclerView.ViewHolder(item) {
