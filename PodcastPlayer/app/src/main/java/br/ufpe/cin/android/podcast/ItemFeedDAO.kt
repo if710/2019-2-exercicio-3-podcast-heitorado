@@ -27,4 +27,7 @@ interface ItemFeedDAO {
 
     @Query("SELECT * FROM feed_items WHERE downloadLink LIKE :q")
     fun searchItemByDownloadLink(q : String) : ItemFeed
+
+    @Query("SELECT * FROM feed_items WHERE downloaded_file_path LIKE :q")
+    fun searchItemByStoragePath(q : String) : ItemFeed
 }

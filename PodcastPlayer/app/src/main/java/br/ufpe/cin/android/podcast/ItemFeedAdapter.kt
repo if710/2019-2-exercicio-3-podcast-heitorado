@@ -1,7 +1,9 @@
 package br.ufpe.cin.android.podcast
 
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.itemlista.view.*
 
 class ItemFeedAdapter (private val items: List<ItemFeed>, private val c: Context): RecyclerView.Adapter<ItemFeedAdapter.ViewHolder>() {
+
     override fun getItemCount(): Int = items.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -22,6 +25,7 @@ class ItemFeedAdapter (private val items: List<ItemFeed>, private val c: Context
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+
         val i = items[position]
         holder.titulo?.text = i.title
         holder.dataPublicacao?.text = i.pubDate
@@ -44,10 +48,16 @@ class ItemFeedAdapter (private val items: List<ItemFeed>, private val c: Context
         }
 
         if(i.downloaded_file_path != ""){
+            holder.itemView.btn_play.alpha = 1.toFloat()
+            holder.itemView.btn_play.isFocusable = true
+            holder.itemView.btn_play.isClickable = true
+
             holder.itemView.btn_play.setOnClickListener {
                 Toast.makeText(c, "Playing Podcast...", Toast.LENGTH_SHORT).show()
                 var intnt = Intent(c, PlayEpisodeService::class.java)
                 intnt.data = Uri.parse(i.downloaded_file_path)
+                intnt.putExtra( "podcast_stopped_at", i.stopped_at)
+                intnt.putExtra( "podcast_dlLink", i.downloadLink)
                 startForegroundService(c, intnt)
             }
         } else {
@@ -55,9 +65,6 @@ class ItemFeedAdapter (private val items: List<ItemFeed>, private val c: Context
             holder.itemView.btn_play.isFocusable = false
             holder.itemView.btn_play.alpha = (0.1).toFloat()
         }
-
-
-
     }
 
     class ViewHolder (item : View) : RecyclerView.ViewHolder(item) {

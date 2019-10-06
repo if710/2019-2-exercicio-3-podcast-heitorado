@@ -1,9 +1,14 @@
 package br.ufpe.cin.android.podcast
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.AsyncTask
 import android.util.Log
+import androidx.annotation.UiThread
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_main.*
@@ -13,17 +18,40 @@ import java.util.ArrayList
 
 class MainActivity : AppCompatActivity() {
 
+    companion object {
+        val DL_COMPLETED = "br.ufpe.cin.android.podcast.PODCAST_DOWNLOAD_COMPLETED"
+        var itemFeedList = ArrayList<ItemFeed>()
+    }
+
+    val receiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            val action = intent.action
+            if (action == DL_COMPLETED) {
+                listRecyclerView.adapter!!.notifyDataSetChanged()
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // Registra receiver para capturar a action de atualizar o botao de play ao terminar download
+        val intentFilter = IntentFilter(DL_COMPLETED)
+        registerReceiver(receiver, intentFilter)
+
         // Set up recyclerView
         listRecyclerView.layoutManager = LinearLayoutManager(this)
-
+        listRecyclerView.adapter = ItemFeedAdapter(itemFeedList, applicationContext)
         listRecyclerView.addItemDecoration(DividerItemDecoration(this, LinearLayoutManager.VERTICAL))
 
         // Download the rss feed in background.
         downloadRssFeed().execute(R.string.action_download)
+    }
+
+    override fun onDestroy() {
+        unregisterReceiver(receiver)
+        super.onDestroy()
     }
 
     internal inner class downloadRssFeed : AsyncTask<Int, Int, List<ItemFeed> >() {
@@ -66,9 +94,8 @@ class MainActivity : AppCompatActivity() {
         // be properly displayed in our layout.
         override fun onPostExecute(result: List<ItemFeed>?) {
             if(result != null) {
-                listRecyclerView.adapter = ItemFeedAdapter(result, applicationContext)
-            } else {
-                listRecyclerView.adapter = ItemFeedAdapter(ArrayList<ItemFeed>(), applicationContext)
+                itemFeedList.addAll(result)
+                listRecyclerView.adapter!!.notifyDataSetChanged()
             }
         }
 

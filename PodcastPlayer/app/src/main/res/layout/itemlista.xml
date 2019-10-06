@@ -11,12 +11,14 @@
         android:id="@+id/btn_play"
         android:layout_width="60sp"
         android:layout_height="60sp"
+        android:layout_marginLeft="5sp"
+        android:layout_marginTop="3sp"
+        android:layout_marginBottom="3sp"
         android:alpha="1"
-        android:backgroundTint="#00FF0000"
+        android:background="#00FFFFFF"
         android:scaleType="center"
-        android:textAlignment="center"
-        app:srcCompat="@drawable/ic_play"
-        tools:srcCompat="@drawable/ic_play" />
+        android:src="@drawable/ic_play"
+        android:textAlignment="center" />
 
     <LinearLayout
         android:id="@+id/podcast_info"

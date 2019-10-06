@@ -47,7 +47,10 @@ class DownloadPodcastService : IntentService("DownloadPodcastService") {
                 podcast_item.downloaded_file_path = output.path
 
                 db.itemFeedDAO().updateItems(podcast_item)
+                MainActivity.itemFeedList.clear()
+                MainActivity.itemFeedList.addAll(db.itemFeedDAO().allItems())
 
+                sendBroadcast(Intent(MainActivity.DL_COMPLETED))
                 Log.e("DL_STATUS", "DOWNLOADED!!!")
 
 

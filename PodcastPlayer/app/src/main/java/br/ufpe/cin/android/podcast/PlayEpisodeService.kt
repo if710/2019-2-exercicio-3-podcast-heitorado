@@ -14,6 +14,11 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.IntentFilter
 import android.os.Build
+import org.jetbrains.anko.doAsync
+import java.io.File
+import java.nio.file.Files.delete
+
+
 
 
 
@@ -24,6 +29,16 @@ class PlayEpisodeService : Service() {
 
     companion object {
         val PLAY_PAUSE_ACTION = "br.ufpe.cin.android.podcast.ACTION_PLAY_PAUSE"
+        var podcast_key = ""
+    }
+
+    val receiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            val action = intent.action
+            if (action == "br.ufpe.cin.android.podcast.ACTION_PLAY_PAUSE") {
+                play_pause_toggle()
+            }
+        }
     }
 
     override fun onCreate() {
@@ -32,10 +47,13 @@ class PlayEpisodeService : Service() {
         createNotificationChannel()
 
         // Cria notificação e botões de controle
+
+        //// Intent para ao clicar na notifcação, retornar para a MainActivity
         val pendingIntent: PendingIntent = Intent(this, MainActivity::class.java).let { notificationIntent ->
             PendingIntent.getActivity(this, 0, notificationIntent, 0)
         }
 
+        // Pending intent que envia a ação de PLAY_PAUSE
         val playPauseIntent = Intent(PLAY_PAUSE_ACTION)
         val pendingPlayPauseIntent = PendingIntent.getBroadcast(this, 100, playPauseIntent, 0)
 
@@ -51,14 +69,6 @@ class PlayEpisodeService : Service() {
         // Registra receiver para capturar a action de play/pause
         val intentFilter = IntentFilter(PLAY_PAUSE_ACTION)
 
-        val receiver = object : BroadcastReceiver() {
-            override fun onReceive(context: Context, intent: Intent) {
-                val action = intent.action
-                if (action == "br.ufpe.cin.android.podcast.ACTION_PLAY_PAUSE") {
-                   play_pause_toggle()
-                }
-            }
-        }
         registerReceiver(receiver, intentFilter)
 
         // Inicia service em foreground
@@ -67,21 +77,40 @@ class PlayEpisodeService : Service() {
 
     override fun onStartCommand(i: Intent?, flags: Int, startId: Int): Int {
 
+        podcast_key = i!!.extras?.getString("podcast_dlLink")?:""
+
         mPlayer = MediaPlayer.create(this, i!!.data!!)
         mPlayer?.isLooping = false
 
         mPlayer?.setOnCompletionListener {
+            // Apaga o podcast do armazenamento e atualiza o banco
+
+            doAsync {
+                var file = File(i!!.data!!.toString())
+                val deleted = file.delete()
+                if (deleted) {
+                    val db = ItemFeedDB.getDatabase(applicationContext)
+                    var item = db.itemFeedDAO().searchItemByStoragePath(i!!.data!!.toString())
+                    item.downloaded_file_path = ""
+                    db.itemFeedDAO().updateItems(item)
+                } else {
+                    Log.e("PlayEpisodeService", "Não foi possivel excluir podcast do armazenamento")
+                }
+            }
+
+            // Para o serviço
             stopSelf(mStartID)
-            // colocar aqui pra apagar o podcast do armazenamento tb (e atualizar o banco)
         }
 
 
         if (mPlayer != null) {
             mStartID = startId
             if (mPlayer!!.isPlaying) {
-                mPlayer?.seekTo(0) //Atualizar o valor do SEEKTO com o valor do banco de onde parou
+                mPlayer?.seekTo(0)
             }
             else {
+                // Atualizar o valor do SEEKTO com o valor armazenado no banco de onde parou
+                mPlayer?.seekTo(i!!.extras?.getInt("podcast_stopped_at")?:0)
                 mPlayer?.start()
             }
         }
@@ -92,7 +121,8 @@ class PlayEpisodeService : Service() {
     }
 
     override fun onDestroy() {
-        // guardar aqui onde parou a musica, pra voltar do mesmo lugar dps.
+
+        unregisterReceiver(receiver)
         mPlayer?.release()
         super.onDestroy()
     }
@@ -102,9 +132,19 @@ class PlayEpisodeService : Service() {
     }
 
     fun play_pause_toggle(){
+        // Se já está tocando:
+        // 1 - Guarda onde parou o podcast, pra voltar do mesmo lugar depois.
+        // 2 - Pausa o mPlayer
         if(mPlayer!!.isPlaying){
+            doAsync {
+                val db = ItemFeedDB.getDatabase(applicationContext)
+                var item = db.itemFeedDAO().searchItemByDownloadLink(podcast_key)
+                item.stopped_at = mPlayer?.currentPosition?:0
+                db.itemFeedDAO().updateItems(item)
+            }
+
             mPlayer?.pause()
-        } else {
+        } else { // Se não estiver tocando: começa a tocar.
             mPlayer?.start()
         }
     }
