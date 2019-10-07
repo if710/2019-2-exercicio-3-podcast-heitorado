@@ -1,4 +1,16 @@
 <resources>
     <string name="app_name">PodcastPlayer</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Preference Titles -->
+    <string name="prefs_header">Preferências</string>
+
+    <!-- Messages Preferences -->
+    <string name="download_link">Baixar Podcasts de...</string>
+    <string name="set_interval">Atualizar feed a cada...</string>
+
+    <!-- default values -->
     <string name="action_download">https://s3-us-west-1.amazonaws.com/podcasts.thepolyglotdeveloper.com/podcast.xml</string>
+
+
 </resources>

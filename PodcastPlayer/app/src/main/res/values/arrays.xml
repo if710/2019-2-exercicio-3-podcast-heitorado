@@ -1,0 +1,24 @@
+<resources>
+    <!-- Reply Preference -->
+    <string-array name="download_interval_entries">
+        <item>1 minuto</item>
+        <item>5 minutos</item>
+        <item>10 minutos</item>
+        <item>30 minutos</item>
+        <item>1 hora</item>
+        <item>12 horas</item>
+        <item>1 dia</item>
+        <item>Nunca</item>
+    </string-array>
+
+    <string-array name="download_interval_values">
+        <item>1</item>
+        <item>5</item>
+        <item>10</item>
+        <item>30</item>
+        <item>60</item>
+        <item>720</item>
+        <item>1440</item>
+        <item>0</item>
+    </string-array>
+</resources>

@@ -50,7 +50,7 @@ class DownloadPodcastService : IntentService("DownloadPodcastService") {
                 MainActivity.itemFeedList.clear()
                 MainActivity.itemFeedList.addAll(db.itemFeedDAO().allItems())
 
-                sendBroadcast(Intent(MainActivity.DL_COMPLETED))
+                LocalBroadcastManager.getInstance(this).sendBroadcast(Intent(MainActivity.DL_COMPLETED))
                 Log.e("DL_STATUS", "DOWNLOADED!!!")
 
 
@@ -59,17 +59,9 @@ class DownloadPodcastService : IntentService("DownloadPodcastService") {
                 c.disconnect()
             }
 
-            LocalBroadcastManager.getInstance(this).sendBroadcast(Intent(DOWNLOAD_COMPLETE))
-
-
-
         } catch (e2: IOException) {
             Log.e(javaClass.getName(), "Exception durante download", e2)
         }
 
-    }
-
-    companion object {
-        val DOWNLOAD_COMPLETE = "br.ufpe.cin.android.podcast.action.DOWNLOAD_COMPLETE"
     }
 }
